@@ -333,4 +333,5 @@ ES = {
     'Close Game': 'Cerrar juego',
     'Closing': 'Cerrando',
     "Anything you haven't saved in the game will be lost.": 'Se perderá todo lo que no hayas guardado en el juego.',
+    'Clear': 'Borrar',
 }

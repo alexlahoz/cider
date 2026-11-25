@@ -77,8 +77,13 @@ struct LibraryView: View {
                         .help("Refresh the library")
                 }
             }
+            // Last, so it sits at the trailing edge (with a gap to the scroll bar).
+            SearchToolbarItem(text: $search)
         }
-        .searchable(text: $search, placement: .toolbar, prompt: Text("Search games"))
+        .onAppear {
+            // Debug: `-CiderSearch <text>` starts with a search (used to test the search field).
+            if let preset = UserDefaults.standard.string(forKey: "CiderSearch") { search = preset }
+        }
         .dropDestination(for: URL.self) { urls, _ in
             let exes = urls.filter { ["exe", "msi"].contains($0.pathExtension.lowercased()) }
             guard !exes.isEmpty else { return false }
@@ -155,8 +160,6 @@ struct LibraryView: View {
             }
         }
         .scrollContentBackground(.hidden)
-        // Keep the scroll bar below the toolbar so it never runs under the search field.
-        .contentMargins(.top, ToolbarMetrics.height, for: .scrollIndicators)
         .ignoresSafeArea(edges: .top)
         .background(AmbientBackground(game: featured))
         .toolbarBackground(.hidden, for: .windowToolbar)
@@ -630,6 +633,60 @@ struct GameCard: View {
 
 extension String {
     var capitalizedFirst: String { prefix(1).uppercased() + dropFirst() }
+}
+
+/// Toolbar search field. Unlike `.searchable`, it keeps a gap to the window's right edge so it
+/// never sits on top of the scroll bar.
+struct SearchToolbarItem: ToolbarContent {
+    @Binding var text: String
+
+    var body: some ToolbarContent {
+        if #available(macOS 26.0, *) {
+            item.sharedBackgroundVisibility(.hidden)
+        } else {
+            item
+        }
+    }
+
+    private var item: some ToolbarContent {
+        ToolbarItem(placement: .primaryAction) {
+            ToolbarSearchField(text: $text)
+        }
+    }
+}
+
+private struct ToolbarSearchField: View {
+    @Binding var text: String
+    @FocusState private var focused: Bool
+
+    var body: some View {
+        HStack(spacing: 7) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(.secondary)
+            TextField("Search games", text: $text)
+                .textFieldStyle(.plain)
+                .focused($focused)
+                .onExitCommand { text = ""; focused = false }
+            if !text.isEmpty {
+                Button { text = "" } label: {
+                    Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .help("Clear")
+                .accessibilityLabel(Text("Clear"))
+            }
+        }
+        .padding(.horizontal, 12)
+        .frame(width: 280, height: 34)
+        .glassCapsule()
+        .padding(.trailing, 22)
+        .background {
+            Button("") { focused = true }
+                .keyboardShortcut("f")
+                .opacity(0)
+                .accessibilityHidden(true)
+        }
+    }
 }
 
 /// Play button with launching/running states. While the game runs, hovering turns it into

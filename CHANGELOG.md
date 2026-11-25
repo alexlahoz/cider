@@ -3,6 +3,11 @@
 All notable changes to Cider are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.4.1] — 2026-11-25
+
+### Fixed
+- The search field now keeps a gap to the window's right edge, so it no longer sits on top of the scroll bar. The scroll bar goes back to running the full height of the page (1.4.0 had moved it below the toolbar).
+
 ## [1.4.0] — 2026-11-25
 
 ### Added

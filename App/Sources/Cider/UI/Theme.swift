@@ -315,8 +315,3 @@ enum Fmt {
         }
     }
 }
-
-/// Height of the unified window toolbar that full-bleed pages scroll under.
-enum ToolbarMetrics {
-    static let height: CGFloat = 56
-}

@@ -59,6 +59,7 @@
 "Cider needs to install Apple's Rosetta 2 to run PC games." = "Cider necesita instalar Rosetta 2 de Apple para ejecutar juegos de PC.";
 "Cider sets this game up for you. Nothing to do." = "Cider prepara este juego por ti. No tienes que hacer nada.";
 "Cider will look up the artwork with the new name." = "Cider buscará la carátula con el nuevo nombre.";
+"Clear" = "Borrar";
 "Click to update" = "Haz clic para actualizar";
 "Close" = "Cerrar";
 "Close %@" = "Cerrar %@";
