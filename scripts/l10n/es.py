@@ -327,4 +327,10 @@ ES = {
     'You have version %@.': 'Tienes la versión %@.',
     'Player': 'Jugador',
     '"macOS window": each game in its own window. "Fixed window": Steam and the game inside a window of a set size': '«Ventana de macOS»: cada juego en su propia ventana. «Ventana fija»: Steam y el juego dentro de una ventana de tamaño fijo',
+    "%@ couldn't be closed.": '%@ no se ha podido cerrar.',
+    'Close %@': 'Cerrar %@',
+    'Close %@?': '¿Cerrar %@?',
+    'Close Game': 'Cerrar juego',
+    'Closing': 'Cerrando',
+    "Anything you haven't saved in the game will be lost.": 'Se perderá todo lo que no hayas guardado en el juego.',
 }

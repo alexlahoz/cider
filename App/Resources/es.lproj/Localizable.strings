@@ -2,6 +2,7 @@
 
 "\"macOS window\": each game in its own window. \"Fixed window\": Steam and the game inside a window of a set size" = "«Ventana de macOS»: cada juego en su propia ventana. «Ventana fija»: Steam y el juego dentro de una ventana de tamaño fijo";
 "%@ added to your library." = "%@ añadido a tu biblioteca.";
+"%@ couldn't be closed." = "%@ no se ha podido cerrar.";
 "%@ didn't open. Check the Steam window." = "%@ no se ha abierto. Revisa la ventana de Steam.";
 "%@ min" = "%@ min";
 "%@ uses DirectX 12, which Cider doesn't support yet. It may not start." = "%@ usa DirectX 12, que Cider aún no admite. Puede que no arranque.";
@@ -24,6 +25,7 @@
 "Analyzing the game…" = "Analizando el juego…";
 "Analyzing…" = "Analizando…";
 "Anti-cheat" = "Antitrampas";
+"Anything you haven't saved in the game will be lost." = "Se perderá todo lo que no hayas guardado en el juego.";
 "Applied" = "Aplicado";
 "Applies the next time Steam opens" = "Se aplica la próxima vez que se abra Steam";
 "Artwork updated." = "Carátula actualizada.";
@@ -59,9 +61,13 @@
 "Cider will look up the artwork with the new name." = "Cider buscará la carátula con el nuevo nombre.";
 "Click to update" = "Haz clic para actualizar";
 "Close" = "Cerrar";
+"Close %@" = "Cerrar %@";
+"Close %@?" = "¿Cerrar %@?";
 "Close All Games" = "Cerrar todos los juegos";
 "Close Everything" = "Cerrar todo";
+"Close Game" = "Cerrar juego";
 "Close everything?" = "¿Cerrar todo?";
+"Closing" = "Cerrando";
 "Closing everything…" = "Cerrando todo…";
 "Compatibility engine" = "Motor de compatibilidad";
 "Compatibility engine for PC games" = "Motor de compatibilidad para juegos de PC";

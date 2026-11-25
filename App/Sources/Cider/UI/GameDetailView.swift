@@ -40,6 +40,8 @@ struct GameDetailView: View {
             }
         }
         .scrollContentBackground(.hidden)
+        // Keep the scroll bar below the toolbar so it never runs under the search field.
+        .contentMargins(.top, ToolbarMetrics.height, for: .scrollIndicators)
         .defaultScrollAnchor(.top)
         }
         .background(AmbientBackground(game: game))

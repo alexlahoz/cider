@@ -43,11 +43,8 @@ final class Updater {
 
     private static let lastCheckKey = "CiderLastUpdateCheck"
 
-    /// Automatic check, at most once a day.
+    /// Automatic check, every time Cider opens.
     func checkOnLaunch() {
-        let last = UserDefaults.standard.object(forKey: Self.lastCheckKey) as? Date ?? .distantPast
-        guard Date().timeIntervalSince(last) > 86_400 || ProcessInfo.processInfo.environment["CIDER_UPDATE_FEED"] != nil
-        else { return }
         Task { await check(userInitiated: false) }
     }
 

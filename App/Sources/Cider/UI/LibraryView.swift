@@ -155,6 +155,8 @@ struct LibraryView: View {
             }
         }
         .scrollContentBackground(.hidden)
+        // Keep the scroll bar below the toolbar so it never runs under the search field.
+        .contentMargins(.top, ToolbarMetrics.height, for: .scrollIndicators)
         .ignoresSafeArea(edges: .top)
         .background(AmbientBackground(game: featured))
         .toolbarBackground(.hidden, for: .windowToolbar)
@@ -630,36 +632,63 @@ extension String {
     var capitalizedFirst: String { prefix(1).uppercased() + dropFirst() }
 }
 
-/// Play button with launching/running states.
+/// Play button with launching/running states. While the game runs, hovering turns it into
+/// "Close Game" (with a confirmation).
 struct PlayButton: View {
     @Environment(AppModel.self) private var model
     let game: Game
     var large: Bool
+    @State private var hover = false
+    @State private var confirmClose = false
 
     var body: some View {
         let activity = model.activity[game.appID] ?? .idle
+        let closing = model.closing.contains(game.appID)
+        let offersClose = activity == .running && !closing && hover
         Button {
-            model.play(game)
+            switch activity {
+            case .idle: model.play(game)
+            case .running: confirmClose = true
+            case .launching: break
+            }
         } label: {
             HStack(spacing: 8) {
-                switch activity {
-                case .idle:
-                    Image(systemName: "play.fill")
-                    Text("Play")
-                case .launching:
+                if closing {
                     ProgressView().controlSize(.small).tint(.white)
-                    Text("Opening")
-                case .running:
-                    Image(systemName: "gamecontroller.fill")
-                    Text("Playing")
+                    Text("Closing")
+                } else {
+                    switch activity {
+                    case .idle:
+                        Image(systemName: "play.fill")
+                        Text("Play")
+                    case .launching:
+                        ProgressView().controlSize(.small).tint(.white)
+                        Text("Opening")
+                    case .running:
+                        Image(systemName: offersClose ? "xmark.circle.fill" : "gamecontroller.fill")
+                            .contentTransition(.symbolEffect(.replace))
+                        // Both titles share the space, so the button keeps its width on hover.
+                        ZStack {
+                            Text("Playing").opacity(offersClose ? 0 : 1)
+                            Text("Close Game").opacity(offersClose ? 1 : 0)
+                        }
+                    }
                 }
             }
             .frame(maxWidth: large ? nil : .infinity)
             .contentTransition(.opacity)
         }
-        .buttonStyle(ProminentButtonStyle(large: large))
-        .disabled(activity != .idle || !game.isInstalled)
-        .keyboardShortcut(large ? .defaultAction : nil)
+        .buttonStyle(ProminentButtonStyle(large: large, destructive: offersClose))
+        .disabled(activity == .launching || closing || (activity == .idle && !game.isInstalled))
+        .keyboardShortcut(large && activity == .idle ? .defaultAction : nil)
+        .onHover { h in withAnimation(.easeOut(duration: 0.18)) { hover = h } }
+        .help(activity == .running ? Text("Close \(game.name)") : Text(verbatim: ""))
+        .confirmationDialog(Text("Close \(game.name)?"), isPresented: $confirmClose) {
+            Button("Close Game", role: .destructive) { model.stopGame(game) }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Anything you haven't saved in the game will be lost.")
+        }
     }
 }
 

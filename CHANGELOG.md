@@ -3,6 +3,17 @@
 All notable changes to Cider are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.4.0] — 2026-11-25
+
+### Added
+- Close a running game from Cider: hover the **Playing** button to turn it into **Close Game**, then confirm. Steam stays open.
+
+### Changed
+- Cider checks for updates every time it opens (it used to check at most once a day).
+
+### Fixed
+- The scroll bar no longer runs under the search field in the toolbar.
+
 ## [1.3.1] — 2026-11-25
 
 ### Fixed

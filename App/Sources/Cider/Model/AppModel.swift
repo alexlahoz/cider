@@ -44,6 +44,8 @@ final class AppModel {
     var state: PersistentState { didSet { if !demoMode { state.save(to: paths.stateFile) } } }
     var games: [Game] = []
     var activity: [Int: GameActivity] = [:]
+    /// Games being closed from Cider ("Close Game").
+    var closing: Set<Int> = []
     var steamRunning = false
     var steamUser: SteamManager.SteamUser?
     var selection: SidebarItem = .library
@@ -225,6 +227,7 @@ final class AppModel {
                 }
             } else if current == .running {
                 activity[game.appID] = .idle
+                closing.remove(game.appID)
                 recordSession(game, end: now)
                 if hiddenForGame && !activity.values.contains(.running) {
                     hiddenForGame = false
@@ -530,6 +533,30 @@ final class AppModel {
             try? await steam.shutdown()
             busyMessage = nil
             steamRunning = false
+        }
+    }
+
+    /// Closes a running game (the "Playing" button's "Close Game"). Steam stays open.
+    func stopGame(_ game: Game) {
+        guard activity[game.appID] == .running, !closing.contains(game.appID) else { return }
+        closing.insert(game.appID)
+        if demoMode {
+            Task {
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                activity[game.appID] = .idle
+                closing.remove(game.appID)
+            }
+            return
+        }
+        let dataDir = paths.data
+        wine.appendLog("Closing \(game.name) from Cider")
+        Task {
+            let closed = await GameLauncher.stop(game, dataDir: dataDir)
+            await tick()
+            closing.remove(game.appID)
+            if !closed {
+                showToast(String(localized: "\(game.name) couldn't be closed."), error: true)
+            }
         }
     }
 

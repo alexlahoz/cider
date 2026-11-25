@@ -67,6 +67,8 @@ extension View {
 /// Big accent button (Play, Get started…).
 struct ProminentButtonStyle: ButtonStyle {
     var large = false
+    /// Red variant, for actions such as closing a running game.
+    var destructive = false
     @Environment(\.isEnabled) private var isEnabled
 
     func makeBody(configuration: Configuration) -> some View {
@@ -76,12 +78,12 @@ struct ProminentButtonStyle: ButtonStyle {
             .padding(.horizontal, large ? 30 : 18)
             .padding(.vertical, large ? 14 : 8)
             .background {
-                Capsule().fill(.ciderGradient)
+                Capsule().fill(destructive ? Self.destructiveGradient : LinearGradient.ciderGradient)
                     .overlay(
                         Capsule().strokeBorder(LinearGradient(colors: [.white.opacity(0.55), .white.opacity(0.05)],
                                                               startPoint: .top, endPoint: .bottom), lineWidth: 1)
                     )
-                    .shadow(color: .ciderDeep.opacity(isEnabled ? 0.45 : 0), radius: large ? 18 : 10, y: large ? 8 : 4)
+                    .shadow(color: (destructive ? Color.red : .ciderDeep).opacity(isEnabled ? 0.45 : 0), radius: large ? 18 : 10, y: large ? 8 : 4)
             }
             .scaleEffect(configuration.isPressed ? 0.96 : 1)
             .brightness(configuration.isPressed ? -0.06 : 0)
@@ -89,6 +91,10 @@ struct ProminentButtonStyle: ButtonStyle {
             .animation(.spring(duration: 0.25, bounce: 0.4), value: configuration.isPressed)
             .contentShape(Capsule())
     }
+
+    private static let destructiveGradient = LinearGradient(
+        colors: [Color(red: 0.93, green: 0.30, blue: 0.27), Color(red: 0.78, green: 0.16, blue: 0.16)],
+        startPoint: .top, endPoint: .bottom)
 }
 
 /// Translucent secondary button.
@@ -308,4 +314,9 @@ enum Fmt {
         case .unknown: return (String(localized: "Unknown"), bits, true)
         }
     }
+}
+
+/// Height of the unified window toolbar that full-bleed pages scroll under.
+enum ToolbarMetrics {
+    static let height: CGFloat = 56
 }

@@ -138,10 +138,15 @@ final class GameLauncher: @unchecked Sendable {
 
     /// True when a process of the game is running (matched by its install folder).
     static func isRunning(_ game: Game, in procs: [ProcessScanner.WinProcess]) -> Bool {
+        !processes(of: game, in: procs).isEmpty
+    }
+
+    /// The game's own processes (the game and any helper it runs from its install folder).
+    static func processes(of game: Game, in procs: [ProcessScanner.WinProcess]) -> [ProcessScanner.WinProcess] {
         if let exe = game.customExe {
             let name = exe.lastPathComponent.lowercased()
             let dir = ProcessScanner.canonicalPath(exe.deletingLastPathComponent().path)
-            return procs.contains { p in
+            return procs.filter { p in
                 p.lowercased.contains(name) &&
                     (p.lowercased.contains(dir.lowercased()) || p.cwd?.hasPrefix(dir) == true
                      || p.lowercased.contains(WineEnvironment.windowsPath(exe).lowercased()))
@@ -150,6 +155,30 @@ final class GameLauncher: @unchecked Sendable {
         let dir = game.installDir.lastPathComponent.lowercased()
         let win = "\\steamapps\\common\\\(dir)\\"
         let unix = "/steamapps/common/\(dir)/"
-        return procs.contains { $0.lowercased.contains(win) || $0.lowercased.contains(unix) }
+        return procs.filter { $0.lowercased.contains(win) || $0.lowercased.contains(unix) }
+    }
+
+    /// Closes a game for good: asks its processes to quit, then forces whatever is left.
+    /// Steam (if it's open) keeps running.
+    static func stop(_ game: Game, dataDir: URL) async -> Bool {
+        await Task.detached(priority: .userInitiated) { () -> Bool in
+            func current() -> [ProcessScanner.WinProcess] {
+                let all = ProcessScanner.allWindowsProcesses()
+                if game.isCustom { return processes(of: game, in: all) }
+                let root = ProcessScanner.canonicalPath(dataDir.path)
+                return processes(of: game, in: all.filter { $0.cwd?.hasPrefix(root) == true })
+            }
+            var procs = current()
+            guard !procs.isEmpty else { return true }
+            for p in procs { kill(p.pid, SIGTERM) }
+            for _ in 0..<20 {
+                try? await Task.sleep(nanoseconds: 250_000_000)
+                procs = current()
+                if procs.isEmpty { return true }
+            }
+            for p in procs { kill(p.pid, SIGKILL) }
+            try? await Task.sleep(nanoseconds: 500_000_000)
+            return current().isEmpty
+        }.value
     }
 }
