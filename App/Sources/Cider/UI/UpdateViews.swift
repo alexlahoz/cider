@@ -88,11 +88,22 @@ struct UpdateSheet: View {
         }
     }
 
+    /// Release notes come as Markdown (from CHANGELOG.md): show "### Added" headings as bold lines.
+    private func formattedNotes(_ notes: String) -> AttributedString {
+        let text = notes.isEmpty ? String(localized: "Improvements and fixes.") : notes
+        let lines = text.components(separatedBy: "\n").map { line -> String in
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            guard trimmed.hasPrefix("#") else { return line }
+            return "**" + trimmed.drop(while: { $0 == "#" }).trimmingCharacters(in: .whitespaces) + "**"
+        }
+        let markdown = lines.joined(separator: "\n")
+        return (try? AttributedString(markdown: markdown, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)))
+            ?? AttributedString(text)
+    }
+
     private func notes(_ release: Updater.Release) -> some View {
         ScrollView {
-            Text((try? AttributedString(markdown: release.notes.isEmpty ? String(localized: "Improvements and fixes.") : release.notes,
-                                        options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)))
-                 ?? AttributedString(release.notes))
+            Text(formattedNotes(release.notes))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .textSelection(.enabled)
         }
