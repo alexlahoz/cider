@@ -3,6 +3,11 @@
 All notable changes to Cider are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.3.1] — 2026-11-25
+
+### Fixed
+- Release notes in the update window now show section headings as bold text instead of raw Markdown (`### Added`).
+
 ## [1.3.0] — 2026-11-25
 
 ### Added
