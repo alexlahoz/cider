@@ -1,0 +1,20 @@
+name: Game compatibility report
+description: Tell us how a game runs in Cider
+labels: [compatibility]
+body:
+  - type: input
+    id: game
+    attributes: { label: Game, placeholder: "Halo Wars: Definitive Edition" }
+    validations: { required: true }
+  - type: dropdown
+    id: status
+    attributes:
+      label: How does it run?
+      options: ["Perfect", "Playable with minor issues", "Starts but not playable", "Doesn't start"]
+    validations: { required: true }
+  - type: input
+    id: mac
+    attributes: { label: Mac and macOS version }
+  - type: textarea
+    id: notes
+    attributes: { label: Notes, description: "Settings used (render resolution, window mode…), FPS, issues" }

@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Cider app icon: a thin, tall Asturian cider glass holding just a "culín" of green cider. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0" stop-color="#23652F"/>
+      <stop offset="0.55" stop-color="#0D3016"/>
+      <stop offset="1" stop-color="#05150A"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.78" r="0.5">
+      <stop offset="0" stop-color="#C6F56A" stop-opacity="0.65"/>
+      <stop offset="0.55" stop-color="#4FC23A" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#4FC23A" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.18"/>
+      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#E8FFD0" stop-opacity="0.22"/>
+      <stop offset="0.22" stop-color="#E8FFD0" stop-opacity="0.07"/>
+      <stop offset="0.78" stop-color="#E8FFD0" stop-opacity="0.05"/>
+      <stop offset="1" stop-color="#E8FFD0" stop-opacity="0.18"/>
+    </linearGradient>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="0.6" stop-color="#E9FFD0" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.85"/>
+    </linearGradient>
+    <linearGradient id="liquid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EEFBA0"/>
+      <stop offset="0.5" stop-color="#B7E54D"/>
+      <stop offset="1" stop-color="#5DB22E"/>
+    </linearGradient>
+    <linearGradient id="foam" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFF4"/>
+      <stop offset="1" stop-color="#E4F6BE"/>
+    </linearGradient>
+    <linearGradient id="base" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7FCB45" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#D9FFB0" stop-opacity="0.75"/>
+    </linearGradient>
+    <filter id="blur30" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="30"/></filter>
+    <filter id="blur10" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="10"/></filter>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+    <clipPath id="squircle"><rect x="100" y="100" width="824" height="824" rx="185"/></clipPath>
+    <!-- glass interior (walls go from 316..708 at the rim to 350..674 at the bottom) -->
+    <clipPath id="inside">
+      <path d="M322,182 L702,182 L668,822 L356,822 Z"/>
+    </clipPath>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#bg)"/>
+  </g>
+  <g clip-path="url(#squircle)">
+    <circle cx="512" cy="770" r="430" fill="url(#glow)"/>
+    <rect x="100" y="100" width="824" height="412" fill="url(#sheen)"/>
+    <ellipse cx="512" cy="872" rx="200" ry="22" fill="#000" opacity="0.55" filter="url(#blur10)"/>
+  </g>
+
+  <!-- glass body -->
+  <path d="M316,176 L708,176 L674,846 Q672,862 656,862 L368,862 Q352,862 350,846 Z" fill="url(#glass)"/>
+
+  <!-- the culín: only the bottom ~1/6 of the glass -->
+  <g clip-path="url(#inside)">
+    <rect x="300" y="712" width="420" height="120" fill="url(#liquid)"/>
+    <ellipse cx="512" cy="760" rx="120" ry="40" fill="#F8FFD0" opacity="0.4" filter="url(#blur30)"/>
+    <!-- light foam on top -->
+    <path d="M300,716 C340,700 372,708 404,700 C440,692 470,706 506,698 C548,690 582,706 616,698 C650,692 690,704 720,700 L720,730 C680,736 640,726 600,732 C556,738 520,728 482,734 C440,740 400,728 360,734 C335,738 315,733 300,730 Z" fill="url(#foam)"/>
+    <g fill="#FFFFFF" fill-opacity="0.9">
+      <circle cx="392" cy="712" r="6"/><circle cx="452" cy="706" r="4.5"/><circle cx="540" cy="707" r="5.5"/>
+      <circle cx="612" cy="711" r="4"/><circle cx="660" cy="709" r="5"/>
+    </g>
+    <!-- bubbles -->
+    <g fill="#FFFFFF">
+      <circle cx="420" cy="790" r="8" fill-opacity="0.6"/>
+      <circle cx="470" cy="760" r="5" fill-opacity="0.7"/>
+      <circle cx="560" cy="800" r="10" fill-opacity="0.5"/>
+      <circle cx="600" cy="758" r="5" fill-opacity="0.7"/>
+      <circle cx="512" cy="812" r="5" fill-opacity="0.6"/>
+      <circle cx="636" cy="792" r="6" fill-opacity="0.6"/>
+      <circle cx="388" cy="752" r="4" fill-opacity="0.7"/>
+    </g>
+    <!-- rising bubbles above the culín -->
+    <g fill="none" stroke="#E6FFB8" stroke-width="3">
+      <circle cx="486" cy="640" r="7" stroke-opacity="0.55"/>
+      <circle cx="540" cy="560" r="5" stroke-opacity="0.4"/>
+      <circle cx="500" cy="470" r="4" stroke-opacity="0.3"/>
+    </g>
+  </g>
+
+  <!-- thick glass bottom -->
+  <path d="M352,822 L672,822 L670,846 Q668,860 654,860 L370,860 Q356,860 354,846 Z" fill="url(#base)"/>
+
+  <!-- thin walls -->
+  <path d="M316,176 L350,846 Q352,862 368,862 L656,862 Q672,862 674,846 L708,176" fill="none" stroke="url(#wall)" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>
+  <ellipse cx="512" cy="176" rx="196" ry="9" fill="none" stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="5"/>
+  <!-- reflections -->
+  <path d="M340,214 L366,214 L396,800 L380,800 Z" fill="#FFFFFF" opacity="0.5"/>
+  <path d="M680,240 L689,240 L662,700 L657,700 Z" fill="#FFFFFF" opacity="0.25"/>
+
+  <!-- sparkles -->
+  <g fill="#FFFFFF">
+    <path d="M248,300 Q252,326 278,330 Q252,334 248,360 Q244,334 218,330 Q244,326 248,300 Z"/>
+    <path d="M790,560 Q793,578 811,581 Q793,584 790,602 Q787,584 769,581 Q787,578 790,560 Z" opacity="0.9"/>
+    <path d="M776,250 Q778,262 790,264 Q778,266 776,278 Q774,266 762,264 Q774,262 776,250 Z" opacity="0.8"/>
+  </g>
+  <circle cx="248" cy="330" r="26" fill="#E8FFB0" opacity="0.3" filter="url(#blur10)"/>
+</svg>

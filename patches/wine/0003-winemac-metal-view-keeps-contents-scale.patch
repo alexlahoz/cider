@@ -1,0 +1,29 @@
+Cider: keep the Metal layer contentsScale chosen by the Metal client (DXMT) instead of letting
+AppKit reset it to the screen backing scale, e.g. when a window enters full screen.
+
+--- a/dlls/winemac.drv/cocoa_window.m
++++ b/dlls/winemac.drv/cocoa_window.m
+@@ -214,7 +214,7 @@
+ @end
+ 
+ 
+-@interface WineMetalView : WineBaseView
++@interface WineMetalView : WineBaseView <NSViewLayerContentScaleDelegate>
+ {
+     id<MTLDevice> _device;
+ }
+@@ -855,6 +855,14 @@
+     - (BOOL) isOpaque
+     {
+         return YES;
++    }
++
++    /* Cider: the Metal client (DXMT) sets this layer's contentsScale to match its drawable.
++     * Don't let AppKit reset it to the screen's backing scale (e.g. when entering full
++     * screen), or the image would be drawn at the wrong size in a corner of the window. */
++    - (BOOL) layer:(CALayer*)layer shouldInheritContentsScale:(CGFloat)newScale fromWindow:(NSWindow*)window
++    {
++        return NO;
+     }
+ 
+ @end

@@ -1,0 +1,264 @@
+Cider: CIDER_RENDER_SCALE=<f> reuses the Retina-mode machinery of winemac.drv with a factor below
+1, so Windows sees a desktop f times smaller and macOS scales every window up. Games then render
+fewer pixels (e.g. 1504x846 instead of 3008x1692 with f=2). Applies to wine-11.21.
+
+--- a/dlls/winemac.drv/macdrv_cocoa.h
++++ b/dlls/winemac.drv/macdrv_cocoa.h
+@@ -115,16 +115,17 @@
+ extern CFDictionaryRef localized_strings;
+ extern bool retina_enabled;  /* Whether Retina mode is enabled via registry setting. */
+ extern bool retina_on;       /* Whether Retina mode is currently active (enabled and display is in default mode). */
++extern double retina_scale;  /* Windows pixels per Mac point while retina_on: 2 for Retina, <1 for Cider render scaling. */
+ extern bool enable_app_nap;
+ 
+ static inline CGRect cgrect_mac_from_win(CGRect rect)
+ {
+     if (retina_on)
+     {
+-        rect.origin.x /= 2;
+-        rect.origin.y /= 2;
+-        rect.size.width /= 2;
+-        rect.size.height /= 2;
++        rect.origin.x /= retina_scale;
++        rect.origin.y /= retina_scale;
++        rect.size.width /= retina_scale;
++        rect.size.height /= retina_scale;
+     }
+ 
+     return rect;
+@@ -134,10 +135,10 @@
+ {
+     if (retina_on)
+     {
+-        rect.origin.x *= 2;
+-        rect.origin.y *= 2;
+-        rect.size.width *= 2;
+-        rect.size.height *= 2;
++        rect.origin.x *= retina_scale;
++        rect.origin.y *= retina_scale;
++        rect.size.width *= retina_scale;
++        rect.size.height *= retina_scale;
+     }
+ 
+     return rect;
+@@ -147,8 +148,8 @@
+ {
+     if (retina_on)
+     {
+-        size.width /= 2;
+-        size.height /= 2;
++        size.width /= retina_scale;
++        size.height /= retina_scale;
+     }
+ 
+     return size;
+@@ -158,8 +159,8 @@
+ {
+     if (retina_on)
+     {
+-        size.width *= 2;
+-        size.height *= 2;
++        size.width *= retina_scale;
++        size.height *= retina_scale;
+     }
+ 
+     return size;
+@@ -169,8 +170,8 @@
+ {
+     if (retina_on)
+     {
+-        point.x /= 2;
+-        point.y /= 2;
++        point.x /= retina_scale;
++        point.y /= retina_scale;
+     }
+ 
+     return point;
+@@ -180,8 +181,8 @@
+ {
+     if (retina_on)
+     {
+-        point.x *= 2;
+-        point.y *= 2;
++        point.x *= retina_scale;
++        point.y *= retina_scale;
+     }
+ 
+     return point;
+--- a/dlls/winemac.drv/macdrv_main.c
++++ b/dlls/winemac.drv/macdrv_main.c
+@@ -52,6 +52,7 @@
+ bool use_precise_scrolling = true;
+ int gl_surface_mode = GL_SURFACE_IN_FRONT_OPAQUE;
+ bool retina_enabled = false;
++double retina_scale = 2.0;
+ bool enable_app_nap = false;
+ 
+ pthread_key_t macdrv_thread_data_key = 0;
+@@ -365,6 +366,19 @@
+        processes in the prefix. */
+     if (!get_config_key(hkey, NULL, "RetinaMode", buffer, sizeof(buffer)))
+         retina_enabled = IS_OPTION_TRUE(buffer[0]);
++
++    /* Cider: CIDER_RENDER_SCALE=<f> reuses the Retina machinery with a factor below 1, so
++       Windows sees the desktop f times smaller and macOS scales everything up: games render
++       fewer pixels in full screen. */
++    {
++        const char *scale = getenv("CIDER_RENDER_SCALE");
++        double factor = scale ? atof(scale) : 0.0;
++        if (factor > 1.0 && factor <= 4.0)
++        {
++            retina_enabled = true;
++            retina_scale = 1.0 / factor;
++        }
++    }
+ 
+     retina_on = retina_enabled;
+ 
+--- a/dlls/winemac.drv/display.c
++++ b/dlls/winemac.drv/display.c
+@@ -412,8 +412,8 @@
+ 
+     if (retina_enabled && is_original)
+     {
+-        width *= 2;
+-        height *= 2;
++        width = (SInt64)(width * retina_scale + 0.5);
++        height = (SInt64)(height * retina_scale + 0.5);
+     }
+ 
+     io_flags &= kDisplayModeInterlacedFlag | kDisplayModeStretchedFlag | kDisplayModeTelevisionFlag;
+@@ -703,8 +703,8 @@
+ 
+         if (is_original && retina_enabled)
+         {
+-            width *= 2;
+-            height *= 2;
++            width = (size_t)(width * retina_scale + 0.5);
++            height = (size_t)(height * retina_scale + 0.5);
+         }
+ 
+         if (bpp != mode_bpp)
+@@ -844,8 +844,8 @@
+ 
+         if (retina_enabled && display_mode_matches_descriptor(mode, desc))
+         {
+-            devmodes[i].dmPelsWidth *= 2;
+-            devmodes[i].dmPelsHeight *= 2;
++            devmodes[i].dmPelsWidth = (DWORD)(devmodes[i].dmPelsWidth * retina_scale + 0.5);
++            devmodes[i].dmPelsHeight = (DWORD)(devmodes[i].dmPelsHeight * retina_scale + 0.5);
+         }
+     }
+     free_display_mode_descriptor(desc);
+@@ -891,8 +891,8 @@
+         struct display_mode_descriptor *desc = create_original_display_mode_descriptor(display_id);
+         if (display_mode_matches_descriptor(display_mode, desc))
+         {
+-            devmode->dmPelsWidth *= 2;
+-            devmode->dmPelsHeight *= 2;
++            devmode->dmPelsWidth = (DWORD)(devmode->dmPelsWidth * retina_scale + 0.5);
++            devmode->dmPelsHeight = (DWORD)(devmode->dmPelsHeight * retina_scale + 0.5);
+         }
+         free_display_mode_descriptor(desc);
+     }
+--- a/dlls/winemac.drv/gdi.c
++++ b/dlls/winemac.drv/gdi.c
+@@ -218,7 +218,7 @@
+         dev = GET_NEXT_PHYSDEV( dev, pGetDeviceCaps );
+         ret = dev->funcs->pGetDeviceCaps( dev, cap );
+         if ((cap == HORZRES || cap == VERTRES) && retina_on)
+-            ret *= 2;
++            ret = (int)(ret * retina_scale + 0.5);
+         return ret;
+     }
+ 
+--- a/dlls/winemac.drv/cocoa_window.m
++++ b/dlls/winemac.drv/cocoa_window.m
+@@ -581,7 +581,7 @@
+         CALayerHost* host = [CALayerHost layer];
+         [host setContextId:contextId];
+         host.magnificationFilter = kCAFilterNearest;
+-        host.contentsScale = retina_on ? 2.0 : 1.0;
++        host.contentsScale = retina_on ? retina_scale : 1.0;
+         host.frame = self.layer.bounds;
+         host.autoresizingMask = kCALayerWidthSizable | kCALayerHeightSizable;
+ 
+@@ -600,14 +600,14 @@
+ 
+     - (void) setLayerRetinaProperties:(BOOL)mode
+     {
+-        [self layer].contentsScale = mode ? 2.0 : 1.0;
++        [self layer].contentsScale = mode ? retina_scale : 1.0;
+         [self layer].minificationFilter = mode ? kCAFilterLinear : kCAFilterNearest;
+         [self layer].magnificationFilter = mode ? kCAFilterLinear : kCAFilterNearest;
+     }
+ 
+     - (void) setRetinaMode:(BOOL)mode
+     {
+-        double scale = mode ? 0.5 : 2.0;
++        double scale = mode ? 1.0 / retina_scale : retina_scale;
+         NSRect frame = self.frame;
+         frame.origin.x *= scale;
+         frame.origin.y *= scale;
+@@ -622,7 +622,7 @@
+         [self setLayerRetinaProperties:mode];
+ 
+         for (CALayerHost* host in [_caLayerHosts allValues])
+-            host.contentsScale = mode ? 2.0 : 1.0;
++            host.contentsScale = mode ? retina_scale : 1.0;
+ 
+         [super setRetinaMode:mode];
+     }
+@@ -837,7 +837,7 @@
+ 
+     - (void) setRetinaMode:(BOOL)mode
+     {
+-        self.layer.contentsScale = mode ? 2.0 : 1.0;
++        self.layer.contentsScale = mode ? retina_scale : 1.0;
+         [super setRetinaMode:mode];
+     }
+ 
+@@ -848,7 +848,7 @@
+         layer.framebufferOnly = YES;
+         layer.magnificationFilter = kCAFilterNearest;
+         layer.backgroundColor = CGColorGetConstantColor(kCGColorBlack);
+-        layer.contentsScale = retina_on ? 2.0 : 1.0;
++        layer.contentsScale = retina_on ? retina_scale : 1.0;
+         return layer;
+     }
+ 
+@@ -2464,12 +2464,12 @@
+     - (void) setRetinaMode:(BOOL)mode
+     {
+         NSRect frame;
+-        double scale = mode ? 0.5 : 2.0;
++        double scale = mode ? 1.0 / retina_scale : retina_scale;
+         NSAffineTransform* transform = [NSAffineTransform transform];
+ 
+         [transform scaleBy:scale];
+ 
+-        [[self contentView] layer].mask.contentsScale = mode ? 2.0 : 1.0;
++        [[self contentView] layer].mask.contentsScale = mode ? retina_scale : 1.0;
+ 
+         for (WineBaseView* subview in [self.contentView subviews])
+         {
+@@ -3729,7 +3729,7 @@
+     offscreen_layer.framebufferOnly = YES;
+     offscreen_layer.magnificationFilter = kCAFilterNearest;
+     offscreen_layer.backgroundColor = CGColorGetConstantColor(kCGColorBlack);
+-    offscreen_layer.contentsScale = retina_on ? 2.0 : 1.0;
++    offscreen_layer.contentsScale = retina_on ? retina_scale : 1.0;
+     [offscreen_layer setBounds:cgrect_mac_from_win(bounds)];
+     [offscreen_layer setAnchorPoint:CGPointMake(0, 0)];
+ 
+--- a/dlls/winemac.drv/cocoa_app.m
++++ b/dlls/winemac.drv/cocoa_app.m
+@@ -1438,7 +1438,7 @@
+             }
+             else
+             {
+-                double scale = retina_on ? 2 : 1;
++                double scale = retina_on ? retina_scale : 1;
+ 
+                 /* Add event delta to accumulated delta error */
+                 /* deltaY is already flipped */

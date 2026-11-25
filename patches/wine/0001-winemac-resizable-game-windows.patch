@@ -1,0 +1,46 @@
+Cider: give normal titled top-level windows the macOS window controls (minimize, zoom,
+resize, full screen) when CIDER_RESIZABLE_WINDOWS=1, so games with fixed-size windows can be
+resized or sent to full screen. Applies to wine-11.21 dlls/winemac.drv/window.c.
+
+--- a/dlls/winemac.drv/window.c
++++ b/dlls/winemac.drv/window.c
+@@ -49,6 +49,18 @@
+ }
+ 
+ 
++/* Cider: enabled with CIDER_RESIZABLE_WINDOWS=1 in the environment. */
++static BOOL cider_resizable_windows(void)
++{
++    static int enabled = -1;
++    if (enabled < 0)
++    {
++        const char *value = getenv("CIDER_RESIZABLE_WINDOWS");
++        enabled = value && value[0] == '1';
++    }
++    return enabled;
++}
++
+ static struct macdrv_window_features get_window_features_for_style(DWORD style, DWORD ex_style, BOOL shaped)
+ {
+     struct macdrv_window_features wf = {0};
+@@ -88,7 +100,19 @@
+     if (ex_style & WS_EX_NOACTIVATE) wf.prevents_app_activation = TRUE;
+     if (EqualRect(&data->rects.window, &data->rects.visible)) return wf;
+ 
+-    return get_window_features_for_style(style, ex_style, data->shaped);
++    wf = get_window_features_for_style(style, ex_style, data->shaped);
++
++    /* Cider: most games create fixed-size windows. On macOS, give every normal titled
++     * top-level window the standard controls (minimize, zoom, resize and full screen),
++     * so a game can be resized or sent to full screen without restarting it. */
++    if (cider_resizable_windows() && wf.title_bar && !wf.utility && !data->shaped &&
++        !NtUserGetWindowRelative(data->hwnd, GW_OWNER))
++    {
++        wf.minimize_button = TRUE;
++        wf.maximize_button = TRUE;
++        wf.resizable = TRUE;
++    }
++    return wf;
+ }
+ 
+ 

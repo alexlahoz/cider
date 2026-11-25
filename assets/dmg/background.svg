@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="400" viewBox="0 0 920 400">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.2" y2="1">
+      <stop offset="0" stop-color="#F6FBEA"/>
+      <stop offset="1" stop-color="#DDF0C2"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.6" r="0.55">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.8"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="920" height="400" fill="url(#bg)"/>
+  <rect width="920" height="400" fill="url(#glow)"/>
+  <g fill="none" stroke="#6DBE3A" stroke-opacity="0.35" stroke-width="2">
+    <circle cx="90" cy="320" r="12"/><circle cx="120" cy="262" r="6"/><circle cx="830" cy="110" r="10"/>
+    <circle cx="790" cy="330" r="15"/><circle cx="460" cy="350" r="5"/><circle cx="60" cy="90" r="7"/>
+  </g>
+  <text x="460" y="52" text-anchor="middle" font-family="-apple-system, SF Pro Display, Helvetica Neue, sans-serif" font-size="24" font-weight="800" fill="#1B4D22">Drag Cider to Applications</text>
+  <text x="460" y="78" text-anchor="middle" font-family="-apple-system, SF Pro Text, Helvetica Neue, sans-serif" font-size="13" fill="#1B4D22" fill-opacity="0.7">First launch blocked? System Settings → Privacy &amp; Security → “Open Anyway” · Arrastra Cider a Aplicaciones</text>
+  <path d="M398,195 L512,195" stroke="#4DB531" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 12"/>
+  <path d="M508,180 L528,195 L508,210" fill="none" stroke="#4DB531" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

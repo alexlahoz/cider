@@ -1,0 +1,11 @@
+.DS_Store
+build/
+dist/
+*.dmg
+.build/
+DerivedData/
+third_party/
+*.log
+__pycache__/
+scripts/local.env
+docs/INFORME.md

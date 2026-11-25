@@ -1,0 +1,16 @@
+Recent mingw-w64 libstdc++ no longer includes <iomanip>/<sstream> transitively.
+
+diff --git a/src/util/com/com_guid.cpp b/src/util/com/com_guid.cpp
+index 11bf4a7..69e0e22 100644
+--- a/src/util/com/com_guid.cpp
++++ b/src/util/com/com_guid.cpp
+@@ -8,7 +8,9 @@
+  * See <https://github.com/doitsujin/dxvk/blob/master/LICENSE>
+  */
+ 
++#include <iomanip>
+ #include <mutex>
++#include <sstream>
+ #include <unordered_set>
+ 
+ #include "com_guid.hpp"

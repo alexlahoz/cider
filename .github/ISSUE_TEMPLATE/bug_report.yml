@@ -1,0 +1,22 @@
+name: Bug report
+description: Something doesn't work as expected
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes: { label: Cider version, description: "Settings → About", placeholder: "1.3.0" }
+    validations: { required: true }
+  - type: input
+    id: mac
+    attributes: { label: Mac and macOS version, placeholder: "MacBook Air M2, macOS 26.1" }
+    validations: { required: true }
+  - type: input
+    id: game
+    attributes: { label: Game, description: "Name, and whether it's from Steam or added manually" }
+  - type: textarea
+    id: what
+    attributes: { label: What happened?, description: "What you expected, what you saw, and how to reproduce it" }
+    validations: { required: true }
+  - type: textarea
+    id: logs
+    attributes: { label: Logs, description: "Diagnostics → Open logs → wine.log (last lines)", render: text }
