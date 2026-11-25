@@ -3,6 +3,11 @@
 All notable changes to Cider are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.4.2] — 2026-11-25
+
+### Fixed
+- Download progress: the update window (and the Steam installer download) stayed at 0 % and then jumped straight to *Installing*. Progress now updates as the file downloads. Takes effect from the next update onwards, since the download runs in the version you already have.
+
 ## [1.4.1] — 2026-11-25
 
 ### Fixed

@@ -130,14 +130,14 @@ final class Updater {
         let dmg = workDir.appendingPathComponent("Cider-\(release.version).dmg")
         do {
             // 1. Download
-            let delegate = DownloadProgressDelegate { [weak self] p in
-                Task { @MainActor in self?.state = .downloading(release, p) }
+            let response = try await Downloader.download(release.dmgURL, to: dmg, expectedSize: release.size) { [weak self] p in
+                Task { @MainActor in
+                    // Late callbacks must not pull the sheet back from "Installing".
+                    guard let self, case .downloading = self.state else { return }
+                    self.state = .downloading(release, p)
+                }
             }
-            let session = URLSession(configuration: .default, delegate: delegate, delegateQueue: nil)
-            defer { session.finishTasksAndInvalidate() }
-            let (tmp, response) = try await session.download(from: release.dmgURL)
-            if let http = response as? HTTPURLResponse, http.statusCode != 200 { throw UpdateError.download }
-            try FileManager.default.moveItem(at: tmp, to: dmg)
+            if let http = response, http.statusCode != 200 { throw UpdateError.download }
 
             guard let target = replaceableAppURL else {
                 // Not installed somewhere writable: let the user drag it.

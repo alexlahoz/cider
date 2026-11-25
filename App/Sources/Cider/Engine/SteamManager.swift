@@ -136,13 +136,11 @@ final class SteamManager: @unchecked Sendable {
     func downloadInstaller(progress: @escaping @Sendable (Double) -> Void) async throws -> URL {
         paths.ensureDirectories()
         let dest = paths.downloads.appendingPathComponent("SteamSetup.exe")
-        let delegate = DownloadProgressDelegate(progress: progress)
-        let session = URLSession(configuration: .default, delegate: delegate, delegateQueue: nil)
-        defer { session.finishTasksAndInvalidate() }
-        let (tmp, response) = try await session.download(from: Self.installerURL)
-        guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw URLError(.badServerResponse) }
-        try? FileManager.default.removeItem(at: dest)
-        try FileManager.default.moveItem(at: tmp, to: dest)
+        let response = try await Downloader.download(Self.installerURL, to: dest, progress: progress)
+        guard response?.statusCode == 200 else {
+            try? FileManager.default.removeItem(at: dest)
+            throw URLError(.badServerResponse)
+        }
         progress(1)
         return dest
     }
@@ -368,15 +366,70 @@ final class SteamManager: @unchecked Sendable {
     }
 }
 
-final class DownloadProgressDelegate: NSObject, URLSessionDownloadDelegate, @unchecked Sendable {
+/// File downloads with progress. URLSession's async `download(from:)` never calls the delegate's
+/// `didWriteData`, so progress bars stayed at 0 % until the end; this drives a download task directly.
+enum Downloader {
+    /// Downloads `url` into `dest` (replacing it). `expectedSize` is used when the server sends no
+    /// Content-Length. Returns the HTTP response; the caller checks the status code.
+    static func download(_ url: URL, to dest: URL, expectedSize: Int64 = 0,
+                         progress: @escaping @Sendable (Double) -> Void) async throws -> HTTPURLResponse? {
+        let delegate = DownloadDelegate(dest: dest, expectedSize: expectedSize, progress: progress)
+        let session = URLSession(configuration: .default, delegate: delegate, delegateQueue: nil)
+        defer { session.finishTasksAndInvalidate() }
+        return try await withTaskCancellationHandler {
+            try await withCheckedThrowingContinuation { continuation in
+                delegate.continuation = continuation
+                session.downloadTask(with: url).resume()
+            }
+        } onCancel: {
+            session.invalidateAndCancel()
+        }
+    }
+}
+
+/// Callbacks arrive on the session's serial delegate queue.
+private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate, @unchecked Sendable {
+    let dest: URL
+    let expectedSize: Int64
     let progress: @Sendable (Double) -> Void
-    init(progress: @escaping @Sendable (Double) -> Void) { self.progress = progress }
+    var continuation: CheckedContinuation<HTTPURLResponse?, Error>?
+    private var moveError: Error?
+    private var lastReported = -1.0
+
+    init(dest: URL, expectedSize: Int64, progress: @escaping @Sendable (Double) -> Void) {
+        self.dest = dest
+        self.expectedSize = expectedSize
+        self.progress = progress
+    }
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64,
                     totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-        guard totalBytesExpectedToWrite > 0 else { return }
-        progress(Double(totalBytesWritten) / Double(totalBytesExpectedToWrite))
+        let total = totalBytesExpectedToWrite > 0 ? totalBytesExpectedToWrite : expectedSize
+        guard total > 0 else { return }
+        let fraction = min(1, Double(totalBytesWritten) / Double(total))
+        // Every half percent is plenty for a progress bar.
+        guard fraction - lastReported >= 0.005 || fraction >= 1 else { return }
+        lastReported = fraction
+        progress(fraction)
     }
 
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {}
+    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+        // The temporary file is deleted when this returns, so move it now.
+        do {
+            try? FileManager.default.removeItem(at: dest)
+            try FileManager.default.moveItem(at: location, to: dest)
+        } catch {
+            moveError = error
+        }
+    }
+
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        guard let continuation else { return }
+        self.continuation = nil
+        if let error = error ?? moveError {
+            continuation.resume(throwing: error)
+        } else {
+            continuation.resume(returning: task.response as? HTTPURLResponse)
+        }
+    }
 }
