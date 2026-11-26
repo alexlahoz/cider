@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="es" data-lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Cider · Juegos de PC en tu Mac con Apple Silicon</title>
+  <meta name="description" content="Cider es una app nativa para Mac con Apple Silicon que abre tu biblioteca de Steam y juega tus juegos de Windows con Wine y DirectX 11 sobre Metal. Gratis y de código abierto.">
+  <meta name="theme-color" content="#07120b">
+  <link rel="canonical" href="https://alexlahoz.github.io/cider/">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Cider · Juegos de PC en tu Mac">
+  <meta property="og:description" content="Tu biblioteca de Steam en tu Mac con Apple Silicon. Pulsa Jugar. Gratis y de código abierto.">
+  <meta property="og:url" content="https://alexlahoz.github.io/cider/">
+  <meta property="og:image" content="https://alexlahoz.github.io/cider/images/banner.png">
+  <meta property="og:image:width" content="1600">
+  <meta property="og:image:height" content="480">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Cider",
+    "operatingSystem": "macOS 14 or later (Apple silicon)",
+    "applicationCategory": "GameApplication",
+    "description": "Play your Windows games on Apple Silicon Macs: a native SwiftUI app with Steam, DirectX 11 on Metal (DXMT) and Wine.",
+    "url": "https://alexlahoz.github.io/cider/",
+    "downloadUrl": "https://github.com/alexlahoz/cider/releases/latest",
+    "license": "https://opensource.org/licenses/MIT",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" }
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+  <link rel="preload" as="image" href="images/library.jpg">
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <a class="skip" href="#main" data-i18n="skip">Saltar al contenido</a>
+
+  <header class="nav" id="top">
+    <div class="nav__inner wrap">
+      <a class="brand" href="#top" aria-label="Cider">
+        <img src="assets/icon-512.png" alt="" width="32" height="32">
+        <span>Cider</span>
+      </a>
+      <nav class="nav__links" aria-label="Secciones">
+        <a href="#funciones" data-i18n="nav.features">Funciones</a>
+        <a href="#recorrido" data-i18n="nav.tour">Recorrido</a>
+        <a href="#motor" data-i18n="nav.engine">Cómo funciona</a>
+        <a href="#instalar" data-i18n="nav.install">Instalar</a>
+      </nav>
+      <div class="nav__actions">
+        <button class="lang" type="button" id="langToggle" aria-label="Cambiar idioma / Change language">
+          <span data-v="es">ES</span><span data-v="en">EN</span>
+        </button>
+        <a class="icon-btn" href="https://github.com/alexlahoz/cider" aria-label="GitHub"><i class="ph ph-github-logo"></i></a>
+        <a class="btn btn--primary btn--sm nav__cta js-download" href="https://github.com/alexlahoz/cider/releases/latest">
+          <i class="ph-fill ph-apple-logo"></i><span data-i18n="cta.download">Descargar para Mac</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="bubbles" aria-hidden="true"></div>
+      <div class="hero__glow" aria-hidden="true"></div>
+      <div class="hero__inner wrap">
+        <div class="hero__copy">
+          <img class="hero__icon reveal" src="assets/icon-512.png" alt="Icono de Cider: un vaso de sidra con un culín verde" width="96" height="96">
+          <h1 class="hero__title reveal" data-i18n="hero.title">Tus juegos de PC,<br><span class="accent">en tu Mac.</span></h1>
+          <p class="hero__sub reveal" data-i18n="hero.sub">Una app nativa para Mac con Apple Silicon. Abre tu biblioteca de Steam, pulsa Jugar y listo. Sin máquinas virtuales.</p>
+          <div class="hero__ctas reveal">
+            <a class="btn btn--primary btn--lg js-download" href="https://github.com/alexlahoz/cider/releases/latest">
+              <i class="ph-fill ph-apple-logo"></i><span data-i18n="cta.download">Descargar para Mac</span>
+            </a>
+            <a class="btn btn--ghost btn--lg" href="https://github.com/alexlahoz/cider">
+              <i class="ph ph-github-logo"></i><span data-i18n="cta.github">Ver en GitHub</span>
+            </a>
+          </div>
+        </div>
+        <figure class="hero__shot">
+          <div class="shot-tilt">
+            <img src="images/library.jpg" width="1600" height="1025" alt="La biblioteca de Cider con Halo Wars destacado, estadísticas y las portadas de tus juegos" data-i18n-alt="alt.library">
+          </div>
+        </figure>
+      </div>
+    </section>
+
+    <!-- FACTS STRIP -->
+    <section class="facts" aria-label="Datos rápidos">
+      <ul class="facts__list wrap">
+        <li><i class="ph ph-hand-heart"></i><span data-i18n="facts.free">Gratis y de código abierto</span></li>
+        <li><i class="ph ph-cpu"></i><span data-i18n="facts.silicon">Apple Silicon, M1 o posterior</span></li>
+        <li><i class="ph ph-desktop"></i><span data-i18n="facts.macos">macOS 14 Sonoma o posterior</span></li>
+        <li><i class="ph ph-translate"></i><span data-i18n="facts.lang">En español e inglés</span></li>
+      </ul>
+    </section>
+
+    <!-- FEATURES BENTO -->
+    <section class="section" id="funciones">
+      <div class="wrap">
+        <h2 class="h2 reveal" data-i18n="feat.title">Pensado para jugar,<br>no para configurar.</h2>
+        <div class="bento">
+          <article class="cell cell--library reveal">
+            <div class="cell__text">
+              <h3 data-i18n="feat.lib.t">Tu biblioteca de Steam, a lo grande</h3>
+              <p data-i18n="feat.lib.p">Portadas, arte, descripciones y capturas. Horas jugadas, última partida y qué juego está abierto ahora mismo.</p>
+            </div>
+            <img src="images/game.jpg" width="1600" height="1025" loading="lazy" alt="Ficha de un juego en Cider con arte, descripción y botón Jugar" data-i18n-alt="alt.game">
+          </article>
+
+          <article class="cell cell--exe reveal">
+            <i class="cell__icon ph ph-file-arrow-down"></i>
+            <h3 data-i18n="feat.exe.t">También juegos de fuera de Steam</h3>
+            <p data-i18n="feat.exe.p">Arrastra un <code>.exe</code>, usa <em>Abrir con → Cider</em> o ejecuta un instalador y Cider encuentra el juego que ha instalado.</p>
+          </article>
+
+          <article class="cell cell--fixes reveal">
+            <i class="cell__icon ph ph-magic-wand"></i>
+            <h3 data-i18n="feat.fix.t">Ajustes por juego, automáticos</h3>
+            <p data-i18n="feat.fix.p">DLL nativas donde hacen falta, arranque en ventana para Unity, Unreal y Source, y modo sin anticheat si el juego lo ofrece.</p>
+          </article>
+
+          <article class="cell cell--window reveal">
+            <div class="cell__text">
+              <h3 data-i18n="feat.win.t">Ventanas de macOS de verdad</h3>
+              <p data-i18n="feat.win.p">Minimiza, redimensiona o pasa a pantalla completa con el botón verde. Incluso en juegos que solo traen ventana fija.</p>
+            </div>
+            <img src="images/window-controls.jpg" width="1980" height="385" loading="lazy" alt="Halo Wars en una ventana de macOS: en ventana, redimensionado y a pantalla completa" data-i18n-alt="alt.window">
+          </article>
+
+          <article class="cell cell--scale reveal">
+            <div class="cell__text">
+              <h3 data-i18n="feat.scale.t">Más FPS en pantallas 4K y 5K</h3>
+              <p data-i18n="feat.scale.p">Renderiza al 75, 67 o 50 % y deja que macOS escale la imagen. Se nota mucho en pantallas grandes.</p>
+            </div>
+            <img src="images/render-scale.jpg" width="1800" height="518" loading="lazy" alt="Halo Wars a dos resoluciones de renderizado con el indicador de rendimiento de Metal" data-i18n-alt="alt.scale">
+          </article>
+
+          <article class="cell cell--update reveal">
+            <i class="cell__icon ph ph-arrows-clockwise"></i>
+            <h3 data-i18n="feat.upd.t">Se actualiza sola</h3>
+            <p data-i18n="feat.upd.p">Al abrirse busca versiones nuevas en GitHub, descarga la actualización, la verifica y se reinicia.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOUR -->
+    <section class="section section--tour" id="recorrido">
+      <div class="wrap tour">
+        <div class="tour__side">
+          <h2 class="h2 reveal" data-i18n="tour.title">Lo prepara todo por ti.</h2>
+          <div class="tour__tabs" role="tablist" aria-label="Pantallas de Cider">
+            <button role="tab" id="tab-welcome" aria-controls="panel-tour" aria-selected="true" data-shot="images/welcome.jpg" data-alt-key="alt.welcome">
+              <span class="tour__name" data-i18n="tour.1.t">Bienvenida</span>
+              <span class="tour__desc" data-i18n="tour.1.p">Cider te cuenta qué va a hacer antes de tocar nada. Solo necesitas conexión y unos 2 GB libres.</span>
+            </button>
+            <button role="tab" id="tab-setup" aria-controls="panel-tour" aria-selected="false" tabindex="-1" data-shot="images/setup.jpg" data-alt-key="alt.setup">
+              <span class="tour__name" data-i18n="tour.2.t">Preparación</span>
+              <span class="tour__desc" data-i18n="tour.2.p">Comprueba tu Mac, instala Rosetta 2 si falta, prepara el motor y descarga Steam oficial de Valve. Steam es opcional.</span>
+            </button>
+            <button role="tab" id="tab-steam" aria-controls="panel-tour" aria-selected="false" tabindex="-1" data-shot="images/steam.jpg" data-alt-key="alt.steam">
+              <span class="tour__name" data-i18n="tour.3.t">Steam</span>
+              <span class="tour__desc" data-i18n="tour.3.p">Tienda, biblioteca y descargas a un clic. Lo que instales en Steam aparece solo en tu biblioteca de Cider.</span>
+            </button>
+            <button role="tab" id="tab-settings" aria-controls="panel-tour" aria-selected="false" tabindex="-1" data-shot="images/settings.jpg" data-alt-key="alt.settings">
+              <span class="tour__name" data-i18n="tour.4.t">Ajustes</span>
+              <span class="tour__desc" data-i18n="tour.4.p">Pocos y claros: tipo de ventana, ocultar Cider mientras juegas, mostrar FPS e idioma de Steam.</span>
+            </button>
+          </div>
+        </div>
+        <figure class="tour__stage reveal" id="panel-tour" role="tabpanel" aria-labelledby="tab-welcome">
+          <img id="tourImg" src="images/welcome.jpg" width="1600" height="1025" loading="lazy" alt="Pantalla de bienvenida de Cider" data-i18n-alt="alt.welcome">
+        </figure>
+      </div>
+    </section>
+
+    <!-- TESTED BAND -->
+    <section class="tested" aria-labelledby="tested-title">
+      <img src="images/halo-wars.jpg" width="1600" height="900" loading="lazy" alt="" class="tested__bg">
+      <div class="tested__inner wrap">
+        <h2 class="h2 reveal" id="tested-title" data-i18n="tested.title">Probado con juegos de verdad.</h2>
+        <p class="lead reveal" data-i18n="tested.p">Halo Wars: Definitive Edition y Halo: The Master Chief Collection funcionan de principio a fin, en modo sin anticheat.</p>
+      </div>
+    </section>
+
+    <!-- ENGINE -->
+    <section class="section" id="motor">
+      <div class="wrap">
+        <h2 class="h2 reveal" data-i18n="engine.title">Lo que pasa cuando pulsas Jugar.</h2>
+        <p class="lead lead--narrow reveal" data-i18n="engine.p">Cider lleva dentro un Wine afinado y DXMT, que traduce Direct3D 10 y 11 a Metal. Todo libre, todo en tu Mac.</p>
+
+        <ol class="pipeline reveal" aria-label="Cadena de ejecución">
+          <li><i class="ph ph-windows-logo"></i><strong data-i18n="pipe.1.t">Juego de Windows</strong><span data-i18n="pipe.1.p">El .exe de siempre, con DirectX 11</span></li>
+          <li><i class="ph ph-wine"></i><strong>Wine 11.21</strong><span data-i18n="pipe.2.p">Ejecuta el juego, con winemac parcheado</span></li>
+          <li><i class="ph ph-shuffle"></i><strong>DXMT</strong><span data-i18n="pipe.3.p">Direct3D 10/11 traducido a Metal</span></li>
+          <li><i class="ph ph-cube"></i><strong>Metal</strong><span data-i18n="pipe.4.p">La GPU de tu chip Apple, a pleno rendimiento</span></li>
+        </ol>
+
+        <div class="compat">
+          <div class="compat__col compat__col--ok reveal">
+            <h3><i class="ph-fill ph-check-circle"></i><span data-i18n="compat.ok">Funciona</span></h3>
+            <ul>
+              <li><strong>Direct3D 10 / 11</strong> <span data-i18n="compat.ok.1">a Metal con DXMT (64 bits)</span></li>
+              <li><strong>Direct3D 8 / 9</strong> <span data-i18n="compat.ok.2">a OpenGL con wined3d</span></li>
+              <li><strong>Vulkan</strong> <span data-i18n="compat.ok.3">a Metal con MoltenVK</span></li>
+            </ul>
+          </div>
+          <div class="compat__col compat__col--no reveal">
+            <h3><i class="ph ph-hourglass-medium"></i><span data-i18n="compat.no">Todavía no</span></h3>
+            <ul>
+              <li><strong>Direct3D 12</strong></li>
+              <li><strong data-i18n="compat.no.1t">Anticheat a nivel de kernel</strong> <span data-i18n="compat.no.1">EasyAntiCheat o BattlEye en modo kernel, Vanguard</span></li>
+              <li><strong data-i18n="compat.no.2t">Macs con Intel</strong></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INSTALL -->
+    <section class="section section--install" id="instalar">
+      <div class="wrap install">
+        <div class="install__steps">
+          <h2 class="h2 reveal" data-i18n="install.title">Instálalo en un par de minutos.</h2>
+          <ol class="steps">
+            <li class="reveal">
+              <i class="ph ph-download-simple"></i>
+              <div><h3 data-i18n="step.1.t">Descarga</h3><p data-i18n="step.1.p">Baja el <code>.dmg</code> de la última versión.</p></div>
+            </li>
+            <li class="reveal">
+              <i class="ph ph-app-window"></i>
+              <div><h3 data-i18n="step.2.t">Arrastra</h3><p data-i18n="step.2.p">Abre el disco y arrastra Cider a Aplicaciones.</p></div>
+            </li>
+            <li class="reveal">
+              <i class="ph ph-shield-check"></i>
+              <div><h3 data-i18n="step.3.t">Permite</h3><p data-i18n="step.3.p">Cider aún no está notarizado por Apple. Ábrelo una vez y ve a <em>Ajustes del Sistema → Privacidad y seguridad → Abrir igualmente</em>.</p></div>
+            </li>
+            <li class="reveal">
+              <i class="ph ph-game-controller"></i>
+              <div><h3 data-i18n="step.4.t">Juega</h3><p data-i18n="step.4.p">Sigue el asistente. A partir de ahí, Cider se actualiza solo.</p></div>
+            </li>
+          </ol>
+        </div>
+
+        <aside class="dl-card reveal" aria-label="Descarga">
+          <img src="assets/icon-512.png" alt="" width="88" height="88" class="dl-card__icon">
+          <p class="dl-card__name">Cider <span class="js-version">1.4.2</span></p>
+          <p class="dl-card__meta"><span class="js-size">155 MB</span> <span aria-hidden="true">·</span> <span class="js-date">25 nov 2026</span></p>
+          <a class="btn btn--primary btn--lg btn--block js-download" href="https://github.com/alexlahoz/cider/releases/latest">
+            <i class="ph-fill ph-apple-logo"></i><span data-i18n="cta.download">Descargar para Mac</span>
+          </a>
+          <ul class="dl-card__req">
+            <li><i class="ph ph-cpu"></i><span data-i18n="req.1">Mac con Apple Silicon (M1 o posterior)</span></li>
+            <li><i class="ph ph-desktop"></i><span data-i18n="req.2">macOS 14 Sonoma o posterior</span></li>
+            <li><i class="ph ph-hard-drives"></i><span data-i18n="req.3">Unos 2 GB libres, más tus juegos</span></li>
+          </ul>
+          <a class="dl-card__link" href="https://github.com/alexlahoz/cider/blob/main/CHANGELOG.md"><span data-i18n="install.changelog">Novedades de cada versión</span> <i class="ph ph-arrow-up-right"></i></a>
+        </aside>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section" id="faq">
+      <div class="wrap faq">
+        <h2 class="h2 reveal" data-i18n="faq.title">Preguntas frecuentes</h2>
+        <div class="faq__list">
+          <details class="reveal">
+            <summary data-i18n="faq.1.q">¿Cuánto cuesta?</summary>
+            <p data-i18n="faq.1.a">Nada. Cider es software libre con licencia MIT. El motor que incluye mantiene sus propias licencias libres (Wine LGPL, DXMT MIT, MoltenVK y LLVM Apache 2.0).</p>
+          </details>
+          <details class="reveal">
+            <summary data-i18n="faq.2.q">¿Necesito Steam?</summary>
+            <p data-i18n="faq.2.a">No. En la preparación puedes elegir «Ahora no, continuar sin Steam» y usar solo los juegos que añadas tú. Steam se puede instalar más tarde desde su sección. Cider nunca incluye Steam: descarga el instalador oficial de Valve.</p>
+          </details>
+          <details class="reveal">
+            <summary data-i18n="faq.3.q">¿Por qué macOS lo bloquea la primera vez?</summary>
+            <p data-i18n="faq.3.a">Porque todavía no está notarizado por Apple. Ábrelo una vez, ve a Ajustes del Sistema → Privacidad y seguridad y pulsa «Abrir igualmente». Solo hace falta hacerlo una vez.</p>
+          </details>
+          <details class="reveal">
+            <summary data-i18n="faq.4.q">¿Dónde guarda Cider sus datos?</summary>
+            <p data-i18n="faq.4.a">En <code>~/Library/Application Support/Cider/</code>. Ahí viven el prefijo de Wine, Steam y tus juegos. Desde Ajustes puedes abrir la carpeta o restablecerlo todo.</p>
+          </details>
+          <details class="reveal">
+            <summary data-i18n="faq.5.q">He probado un juego. ¿Cómo lo cuento?</summary>
+            <p data-i18n="faq.5.a">Abre un <a href="https://github.com/alexlahoz/cider/issues/new?template=game_report.yml">informe de juego</a> en GitHub, funcione o no. Si algo falla en la propia app, usa el <a href="https://github.com/alexlahoz/cider/issues/new?template=bug_report.yml">informe de error</a>.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer__inner">
+      <div class="footer__brand">
+        <a class="brand" href="#top"><img src="assets/icon-512.png" alt="" width="28" height="28"><span>Cider</span></a>
+        <p data-i18n="footer.made">Hecho con SwiftUI. Código abierto con licencia MIT.</p>
+      </div>
+      <div class="footer__cols">
+        <div>
+          <h4 data-i18n="footer.project">Proyecto</h4>
+          <a href="https://github.com/alexlahoz/cider">GitHub</a>
+          <a href="https://github.com/alexlahoz/cider/releases" data-i18n="footer.releases">Versiones</a>
+          <a href="https://github.com/alexlahoz/cider/blob/main/CONTRIBUTING.md" data-i18n="footer.contrib">Contribuir</a>
+          <a href="https://github.com/alexlahoz/cider/blob/main/licenses/NOTICE.md" data-i18n="footer.licenses">Licencias</a>
+        </div>
+        <div>
+          <h4 data-i18n="footer.thanks">Gracias a</h4>
+          <a href="https://www.winehq.org">Wine</a>
+          <a href="https://github.com/Gcenx/macOS_Wine_builds">Gcenx Wine builds</a>
+          <a href="https://github.com/3Shain/dxmt">DXMT</a>
+          <a href="https://github.com/KhronosGroup/MoltenVK">MoltenVK</a>
+        </div>
+      </div>
+      <p class="footer__legal" data-i18n="footer.legal">Steam es una marca de Valve Corporation. Windows, DirectX y Halo son marcas de Microsoft. Cider es un proyecto independiente y no está afiliado a Valve, Microsoft ni Apple.</p>
+    </div>
+  </footer>
+
+  <script src="site.js" defer></script>
+</body>
+</html>
